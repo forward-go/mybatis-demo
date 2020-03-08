@@ -3,10 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-    <properties resource="config.properties">
-        <property name="username" value="dev_user"/>
-        <property name="password" value="F2Fa3!33TYyg"/>
-    </properties>
+    <properties resource="config.properties"/>
+
+    <settings>
+        <setting name="localCacheScope" value="SESSION"/>
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
     <environments default="development">
         <environment id="development">
             <transactionManager type="JDBC"/>
@@ -18,7 +21,8 @@
             </dataSource>
         </environment>
     </environments>
-  <!--  <mappers>
-        <mapper resource="org/mybatis/example/BlogMapper.xml"/>
-    </mappers>-->
+    <!--SQL映射文件,mybatis的核心-->
+    <mappers>
+        <mapper resource="mapper/studentMapper.xml"/>
+    </mappers>
 </configuration>

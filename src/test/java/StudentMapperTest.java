@@ -1,4 +1,5 @@
 import entity.StudentEntity;
+import mapper.ClassMapper;
 import mapper.StudentMapper;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -87,6 +88,97 @@ public class StudentMapperTest {
         System.out.println("studentMapper读取数据: " + studentMapper.getStudentById(1));
         System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentById(1));
 
+    }
+
+    /**
+     *  <setting name="localCacheScope" value="SESSION"/>
+     *  <setting name="cacheEnabled" value="true"/>
+     * @throws Exception
+     */
+    @Test
+    public void testCacheWithoutCommitOrClose() throws Exception {
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true); // 自动提交事务
+
+        StudentMapper studentMapper = sqlSession1.getMapper(StudentMapper.class);
+        StudentMapper studentMapper2 = sqlSession2.getMapper(StudentMapper.class);
+
+        System.out.println("studentMapper读取数据: " + studentMapper.getStudentById(1));
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentById(1));
+
+    }
+
+    /**
+     *  <setting name="localCacheScope" value="SESSION"/>
+     *  <setting name="cacheEnabled" value="true"/>
+     * @throws Exception
+     */
+    @Test
+    public void testCacheWithCommitOrClose() throws Exception {
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true); // 自动提交事务
+
+        StudentMapper studentMapper = sqlSession1.getMapper(StudentMapper.class);
+        StudentMapper studentMapper2 = sqlSession2.getMapper(StudentMapper.class);
+
+        System.out.println("studentMapper读取数据: " + studentMapper.getStudentById(1));
+        sqlSession1.close();
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentById(1));
+
+    }
+
+    /**
+     *  <setting name="localCacheScope" value="SESSION"/>
+     *  <setting name="cacheEnabled" value="true"/>
+     * @throws Exception
+     */
+    @Test
+    public void testCacheWithUpdate() throws Exception {
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession3 = sqlSessionFactory.openSession(true); // 自动提交事务
+
+
+        StudentMapper studentMapper = sqlSession1.getMapper(StudentMapper.class);
+        StudentMapper studentMapper2 = sqlSession2.getMapper(StudentMapper.class);
+        StudentMapper studentMapper3 = sqlSession3.getMapper(StudentMapper.class);
+
+
+        System.out.println("studentMapper读取数据: " + studentMapper.getStudentById(1));
+        sqlSession1.close();
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentById(1));
+
+        studentMapper3.updateStudentName("方方",1);
+        sqlSession3.commit();
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentById(1));
+    }
+
+    /**
+     *  <setting name="localCacheScope" value="SESSION"/>
+     *  <setting name="cacheEnabled" value="true"/>
+     * @throws Exception
+     */
+    @Test
+    public void testCacheWithDiffererntNamespace() throws Exception {
+        SqlSession sqlSession1 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession2 = sqlSessionFactory.openSession(true); // 自动提交事务
+        SqlSession sqlSession3 = sqlSessionFactory.openSession(true); // 自动提交事务
+
+
+        StudentMapper studentMapper = sqlSession1.getMapper(StudentMapper.class);
+        StudentMapper studentMapper2 = sqlSession2.getMapper(StudentMapper.class);
+        ClassMapper classMapper = sqlSession3.getMapper(ClassMapper.class);
+
+        classMapper.updateClassName("平民一班",1);
+        System.out.println("studentMapper读取数据: " + studentMapper.getStudentByIdWithClassInfo(1));
+        sqlSession1.close();
+
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentByIdWithClassInfo(1));
+
+        classMapper.updateClassName("特色一班",1);
+        sqlSession3.commit();
+
+        System.out.println("studentMapper2读取数据: " + studentMapper2.getStudentByIdWithClassInfo(1));
     }
 
     private StudentEntity buildStudent(){

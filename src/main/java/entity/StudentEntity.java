@@ -6,6 +6,8 @@ public class StudentEntity implements Serializable {
     private Integer id;
     private String name;
     private Integer age;
+    // 班级
+    private String className;
 
     public Integer getId() {
         return id;
@@ -31,12 +33,21 @@ public class StudentEntity implements Serializable {
         this.age = age;
     }
 
+    public String getClassName() {
+        return className;
+    }
+
+    public void setClassName(String className) {
+        this.className = className;
+    }
+
     @Override
     public String toString() {
         return "StudentEntity{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
+                ", className='" + className + '\'' +
                 '}';
     }
 }
